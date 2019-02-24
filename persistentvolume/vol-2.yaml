@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: redis-pv-1
+  labels:
+    type: local
+spec:
+  storageClassName: redis-manual-1
+  capacity:
+    storage: 200m
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /code/redis_path/n2

@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stateful-redis
+spec:
+  podManagementPolicy: Parallel
+  serviceName: svc-redis
+  replicas: 6
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        appCluster: redis-cluster
+    spec:
+      containers:
+        - name: redis
+          image: redis:3.2.8
+          command:
+            - "redis-server"
+          args:
+            - "/etc/redis/redis.conf"
+            - "--protected-mode"
+            - "no"
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: "TCP"
+            - name: cluster
+              containerPort: 16379
+              protocol: "TCP"
+          volumeMounts:
+            - name: redis-conf
+              mountPath: /etc/redis
+            - name: redis-data
+              mountPath: /var/lib/redis
+      volumes:
+        - name: redis-conf
+          configMap:
+            name: redis-conf
+            items:
+            - key: redis.conf
+              path: redis.conf
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 200M

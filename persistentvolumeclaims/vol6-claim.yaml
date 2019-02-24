@@ -1,0 +1,11 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: redis-data-stateful-redis-5
+spec:
+  storageClassName: redis-manual-5
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200m
